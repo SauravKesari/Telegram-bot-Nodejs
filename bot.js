@@ -14,33 +14,43 @@ bot.on('message',async (msg) => {
     const message = msg.text;
 
     // Respond to the incoming message
-    if (message.startsWith('/weather')) {
-        bot.sendMessage(chatId, `Enter city name to get the weather report.. `);
+    if (message.toLowerCase() === '/start') {
+        bot.sendMessage(chatId, `Welcome! Here are the available commands:\n\n/weather - Get weather report for a city\n/exit - Exit conversation`);
+    } else if (message.toLowerCase().startsWith('/weather')) {
+        bot.sendMessage(chatId, `Enter your city.. `);
         // Set the conversation state to 'awaitingCity'
         conversationState[chatId] = 'awaitingCity';
     }
     // Check if the conversation state is 'awaitingCity'
     else if (conversationState[chatId] === 'awaitingCity') {
-        const city = message; // Get the city from the user's message
+        if (message.toLowerCase() === '/exit') {
+            bot.sendMessage(chatId, 'Conversation ended. Type /weather to start a new conversation.');
+            delete conversationState[chatId]; 
+        }
+        else {
+            const city = message; // Get the city from the user's message
 
-        try {
-            // Call OpenWeatherMap API
-            const response = await axios.
-            get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherAPIKey}&units=metric`);
+            try {
+                // Call OpenWeatherMap API
+                const response = await axios.
+                get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherAPIKey}&units=metric`);
 
-            // Extract weather information
-            const weatherDescription = response.data.weather[0].description;
-            const temperature = response.data.main.temp;
-            console.log(response.data);
-
-            // Send weather report
-            bot.sendMessage(chatId, `Weather in ${city}: ${weatherDescription}\n, Temperature: ${temperature}°C`);
-
-            // Reset conversation state
-            delete conversationState[chatId];
-        } catch (error) {
-            console.error('Error fetching weather:', error);
-            bot.sendMessage(chatId, 'Error fetching weather. Please try again.');
+                // Extract weather information
+                const weatherDescription = response.data.weather[0].description;
+                const mainDetails = response.data.main;
+                const temperature = mainDetails.temp;
+                // Send weather report
+                bot.sendMessage(chatId, `Weather in ${city}: ${weatherDescription}
+                Temperature: ${temperature}°C
+                Humidity: ${mainDetails.humidity}
+                Min Temp: ${mainDetails.temp_min}
+                Max Temp: ${mainDetails.temp_max}`);
+            
+            }
+            catch (error) {
+             console.error('Error fetching weather:', error);
+             bot.sendMessage(chatId, 'Error fetching weather. Please try again.');
+            }
         }
     } else {
         // Respond to other messages
