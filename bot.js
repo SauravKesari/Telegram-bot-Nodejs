@@ -57,3 +57,6 @@ bot.on('message',async (msg) => {
         bot.sendMessage(chatId, `Enter /weather to start conversation`);
     }
 })
+
+const port = process.env.PORT || 3000;
+console.log('Telegram bot is running on '+port);
