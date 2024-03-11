@@ -1,5 +1,7 @@
+const express = require('express');
 const Telegram = require('node-telegram-bot-api');
 const axios = require('axios');
+const app = express();
 
 const token = '6895299176:AAHLERqbcRrBElADEx3O24mPeGgEleJMC30';
 const weatherAPIKey = 'bae2894f2b5a72db6ed038c33f7e9957';
@@ -59,4 +61,7 @@ bot.on('message',async (msg) => {
 })
 
 const port = process.env.PORT || 3000;
-console.log('Telegram bot is running on '+port);
+app.listen(port,() => {
+    console.log('Telegram bot is running on '+port);
+})
+
