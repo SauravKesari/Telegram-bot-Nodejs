@@ -11,6 +11,10 @@ const bot = new Telegram(token,{polling:true});
 // Keep Track of messages
 const conversationState = {};
 
+app.get('/',(req,res) => {
+    console.log('hello to weather bot..');
+})
+
 bot.on('message',async (msg) => {
     const chatId = msg.chat.id;
     const message = msg.text;
