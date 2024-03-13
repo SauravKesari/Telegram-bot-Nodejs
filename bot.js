@@ -15,6 +15,11 @@ app.get('/',(req,res) => {
     console.log('hello to weather bot..');
 })
 
+app.post(`/bot${token}`, (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+})
+
 bot.on('message',async (msg) => {
     const chatId = msg.chat.id;
     const message = msg.text;
